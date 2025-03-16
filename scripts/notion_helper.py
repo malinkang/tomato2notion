@@ -64,8 +64,8 @@ class NotionHelper:
         self.config = self.query_setting_data()
         print(self.config)
         print(self.day_database_id)
-        # if self.day_database_id:
-        #     self.write_database_id(self.day_database_id)
+        if self.day_database_id:
+            self.write_database_id(self.day_database_id)
 
     
 
