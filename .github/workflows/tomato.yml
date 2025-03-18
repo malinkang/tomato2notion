@@ -13,6 +13,7 @@ jobs:
         NOTION_PAGE: ${{ secrets.NOTION_PAGE }}
         COOKIE: ${{ secrets.COOKIE }}
         YEAR: ${{ vars.YEAR }}
+        REF: ${{ github.ref }}
         REPOSITORY: ${{ github.repository }}
     steps:
       - name: Checkout
