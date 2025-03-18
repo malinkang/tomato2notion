@@ -51,7 +51,6 @@ class NotionHelper:
         r = self.client.databases.retrieve(database_id=self.tomato_database_id)
         for key,value in r.get("properties").items():
             self.property_dict[key] = value
-        print(self.property_dict)
         self.day_database_id = self.get_relation_database_id(self.property_dict.get("日"))
         self.todo_database_id = self.get_relation_database_id(self.property_dict.get("任务"))
         self.week_database_id = self.get_relation_database_id(self.property_dict.get("周"))
@@ -62,8 +61,6 @@ class NotionHelper:
             self.database_name_dict.get("SETTING_DATABASE_NAME")
         )
         self.config = self.query_setting_data()
-        print(self.config)
-        print(self.day_database_id)
         if self.day_database_id:
             self.write_database_id(self.day_database_id)
 

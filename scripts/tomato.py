@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import argparse
+import json
 import os
 
 import pendulum
@@ -16,7 +17,6 @@ def login(username, password):
     session = requests.Session()
     login_url = "https://api.dida365.com/api/v2/user/signon?wc=true&remember=true"
     payload = {"username": username, "password": password}
-    print(payload)
     response = session.post(login_url, json=payload, headers=headers)
 
     if response.status_code == 200:
@@ -118,6 +118,7 @@ def get_pomodoros():
             if len(tasks):
                 result["title"] = tasks[0].get("title")
                 result["task_id"] = tasks[0].get("taskId")
+                result["project_name"] = tasks[0].get("projectName")
     return results
 
 
@@ -139,9 +140,8 @@ def insert_tamato():
         if item.get("task_id") and item.get("task_id") in todo_dict:
             tomato["任务"] = [todo_dict.get(item.get("task_id")).get("id")]
             tomato["任务id"] = item.get("task_id")
-            projct_name = todo_dict.get(item.get("task_id")).get("project_name")
-            if projct_name:
-                tomato["清单"] = projct_name
+        if item.get("project_name"):
+            tomato["清单"] = item.get("project_name")
         properties = utils.get_properties(tomato, d)
         notion_helper.get_date_relation(properties, pendulum.parse(item.get("endTime")))
         parent = {
@@ -202,17 +202,9 @@ if __name__ == "__main__":
     username = config.get("滴答清单账号")
     password = config.get("滴答清单密码")
     session = login(username, password)
-    project_dict2= {}
     todos = notion_helper.query_all(notion_helper.todo_database_id)
     todo_dict = {}
     for todo in todos:
-        project_page_ids = utils.get_property_value(todo.get("properties").get("清单"))
-        if project_page_ids:
-            project_page_id = project_page_ids[0].get("id")
-            if project_page_id not in project_dict2:
-                project_page = notion_helper.client.pages.retrieve(project_page_id)
-                project_dict2[project_page_id] = utils.get_property_value(project_page.get("properties").get("标题"))
-            todo["project_name"] = project_dict2.get(project_page_id)
         todo_dict[utils.get_property_value(todo.get("properties").get("id"))] = todo
     tomatos = notion_helper.query_all(notion_helper.tomato_database_id)
     tomato_dict = {}
