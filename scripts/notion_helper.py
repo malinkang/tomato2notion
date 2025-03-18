@@ -286,3 +286,7 @@ class NotionHelper:
                 self.get_relation_id("全部",self.all_database_id,TARGET_ICON_URL),
             ]
         )
+    @retry(stop_max_attempt_number=3, wait_fixed=5000)
+    def update_heatmap(self, block_id, url):
+        # 更新 image block 的链接
+        return self.client.blocks.update(block_id=block_id, embed={"url": url})
